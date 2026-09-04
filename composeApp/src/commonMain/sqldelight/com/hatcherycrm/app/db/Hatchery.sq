@@ -1,0 +1,52 @@
+CREATE TABLE Customer (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT,
+    email TEXT,
+    address TEXT,
+    notes TEXT
+);
+
+CREATE TABLE HatchBatch (
+    id TEXT NOT NULL PRIMARY KEY,
+    species TEXT NOT NULL,
+    eggCount INTEGER NOT NULL,
+    startDateEpochDay INTEGER NOT NULL,
+    expectedHatchEpochDay INTEGER NOT NULL,
+    status TEXT NOT NULL
+);
+
+CREATE TABLE Order_ (
+    id TEXT NOT NULL PRIMARY KEY,
+    customerId TEXT NOT NULL,
+    batchId TEXT,
+    quantity INTEGER NOT NULL,
+    orderDateEpochDay INTEGER NOT NULL,
+    fulfilled INTEGER AS Boolean NOT NULL DEFAULT 0,
+    FOREIGN KEY (customerId) REFERENCES Customer(id),
+    FOREIGN KEY (batchId) REFERENCES HatchBatch(id)
+);
+
+selectAllCustomers:
+SELECT * FROM Customer ORDER BY name;
+
+insertCustomer:
+INSERT INTO Customer(id, name, phone, email, address, notes)
+VALUES (?, ?, ?, ?, ?, ?);
+
+deleteCustomer:
+DELETE FROM Customer WHERE id = ?;
+
+selectAllBatches:
+SELECT * FROM HatchBatch ORDER BY startDateEpochDay DESC;
+
+insertBatch:
+INSERT INTO HatchBatch(id, species, eggCount, startDateEpochDay, expectedHatchEpochDay, status)
+VALUES (?, ?, ?, ?, ?, ?);
+
+selectAllOrders:
+SELECT * FROM Order_ ORDER BY orderDateEpochDay DESC;
+
+insertOrder:
+INSERT INTO Order_(id, customerId, batchId, quantity, orderDateEpochDay, fulfilled)
+VALUES (?, ?, ?, ?, ?, ?);
