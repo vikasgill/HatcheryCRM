@@ -11,3 +11,4 @@ captures/
 DerivedData/
 *.xcuserstate
 xcuserdata/
+.kotlin/

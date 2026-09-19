@@ -1,10 +1,7 @@
 package com.hatcherycrm.app.data
 
-import com.hatcherycrm.app.db.HatcheryDatabase
-
-class CustomerRepository(driverFactory: DatabaseDriverFactory) {
-    private val database = HatcheryDatabase(driverFactory.createDriver())
-    private val queries = database.hatcheryDatabaseQueries
+class CustomerRepository(database: AppDatabase) {
+    private val queries = database.instance.hatcheryQueries
 
     fun getAllCustomers() = queries.selectAllCustomers().executeAsList()
 

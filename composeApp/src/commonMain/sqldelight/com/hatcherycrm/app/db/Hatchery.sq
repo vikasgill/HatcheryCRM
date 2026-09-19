@@ -1,3 +1,5 @@
+import kotlin.Boolean;
+
 CREATE TABLE Customer (
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -44,9 +46,15 @@ insertBatch:
 INSERT INTO HatchBatch(id, species, eggCount, startDateEpochDay, expectedHatchEpochDay, status)
 VALUES (?, ?, ?, ?, ?, ?);
 
+deleteBatch:
+DELETE FROM HatchBatch WHERE id = ?;
+
 selectAllOrders:
 SELECT * FROM Order_ ORDER BY orderDateEpochDay DESC;
 
 insertOrder:
 INSERT INTO Order_(id, customerId, batchId, quantity, orderDateEpochDay, fulfilled)
 VALUES (?, ?, ?, ?, ?, ?);
+
+deleteOrder:
+DELETE FROM Order_ WHERE id = ?;
