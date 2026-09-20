@@ -1,11 +1,28 @@
 package com.hatcherycrm.app.data
 
-class BatchRepository(database: AppDatabase) {
-    private val queries = database.instance.hatcheryQueries
+import com.hatcherycrm.app.db.HatchBatch
 
-    fun getAllBatches() = queries.selectAllBatches().executeAsList()
+interface BatchRepository {
+    fun getAllBatches(): List<HatchBatch>
 
     fun addBatch(
+        id: String,
+        species: String,
+        eggCount: Long,
+        startDateEpochDay: Long,
+        expectedHatchEpochDay: Long,
+        status: String
+    )
+
+    fun deleteBatch(id: String)
+}
+
+class SqlDelightBatchRepository(database: AppDatabase) : BatchRepository {
+    private val queries = database.instance.hatcheryQueries
+
+    override fun getAllBatches() = queries.selectAllBatches().executeAsList()
+
+    override fun addBatch(
         id: String,
         species: String,
         eggCount: Long,
@@ -16,7 +33,7 @@ class BatchRepository(database: AppDatabase) {
         queries.insertBatch(id, species, eggCount, startDateEpochDay, expectedHatchEpochDay, status)
     }
 
-    fun deleteBatch(id: String) {
+    override fun deleteBatch(id: String) {
         queries.deleteBatch(id)
     }
 }

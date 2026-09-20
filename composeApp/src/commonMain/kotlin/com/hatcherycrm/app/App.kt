@@ -17,11 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.hatcherycrm.app.data.AppDatabase
-import com.hatcherycrm.app.data.BatchRepository
-import com.hatcherycrm.app.data.CustomerRepository
-import com.hatcherycrm.app.data.DatabaseDriverFactory
-import com.hatcherycrm.app.data.OrderRepository
+import com.hatcherycrm.app.data.AppRepositories
 import com.hatcherycrm.app.data.newId
 import com.hatcherycrm.app.ui.BatchFormScreen
 import com.hatcherycrm.app.ui.BatchListScreen
@@ -40,12 +36,11 @@ import com.hatcherycrm.app.ui.Screen
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(driverFactory: DatabaseDriverFactory) {
+fun App(repositories: AppRepositories) {
     MaterialTheme {
-        val database = remember { AppDatabase(driverFactory) }
-        val customerRepository = remember { CustomerRepository(database) }
-        val batchRepository = remember { BatchRepository(database) }
-        val orderRepository = remember { OrderRepository(database) }
+        val customerRepository = repositories.customers
+        val batchRepository = repositories.batches
+        val orderRepository = repositories.orders
 
         var screen by remember { mutableStateOf<Screen>(Screen.Dashboard) }
         var customers by remember { mutableStateOf(customerRepository.getAllCustomers()) }

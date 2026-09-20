@@ -1,11 +1,28 @@
 package com.hatcherycrm.app.data
 
-class OrderRepository(database: AppDatabase) {
-    private val queries = database.instance.hatcheryQueries
+import com.hatcherycrm.app.db.Order_
 
-    fun getAllOrders() = queries.selectAllOrders().executeAsList()
+interface OrderRepository {
+    fun getAllOrders(): List<Order_>
 
     fun addOrder(
+        id: String,
+        customerId: String,
+        batchId: String?,
+        quantity: Long,
+        orderDateEpochDay: Long,
+        fulfilled: Boolean
+    )
+
+    fun deleteOrder(id: String)
+}
+
+class SqlDelightOrderRepository(database: AppDatabase) : OrderRepository {
+    private val queries = database.instance.hatcheryQueries
+
+    override fun getAllOrders() = queries.selectAllOrders().executeAsList()
+
+    override fun addOrder(
         id: String,
         customerId: String,
         batchId: String?,
@@ -16,7 +33,7 @@ class OrderRepository(database: AppDatabase) {
         queries.insertOrder(id, customerId, batchId, quantity, orderDateEpochDay, fulfilled)
     }
 
-    fun deleteOrder(id: String) {
+    override fun deleteOrder(id: String) {
         queries.deleteOrder(id)
     }
 }
