@@ -47,3 +47,5 @@ we are intentionally scoping down to a focused hatchery CRM first.
 - [x] Customer CRUD screens (list + add form)
 - [x] Hatch Batch CRUD screens (list + add form)
 - [x] Order CRUD screens (list + add form)
+- [x] Web demo build (wasmJs) live at https://vikasgill.github.io/HatcheryCRM/web-demo/
+      — uses in-memory data (resets on reload); Android/iOS/Desktop keep SQLite persistence
