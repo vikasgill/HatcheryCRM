@@ -1,16 +1,16 @@
 # HatcheryCRM — Architecture & Financial Model
 
 **Prepared as:** Principal Software Architect + B2B SaaS Financial Analyst review
-**Exchange rate used:** $1 USD = ₹83.5 INR
+**Exchange rate used throughout:** $1 USD = ₹83.5 INR (all figures shown as **$USD (₹INR)**)
 **Pricing model:** Hybrid (base + metered overage, capped)
 
 | Tier | Base | Included Volume | Overage | Hard Cap | Eggs at Cap Ceiling* |
 |---|---|---|---|---|---|
-| Starter | $30/mo (₹2,500) | 150,000 eggs | $1.50/10k eggs | $60/mo (₹5,000) | 350,000 eggs |
-| Commercial | $90/mo (₹7,500) | 750,000 eggs | $1.20/10k eggs | $180/mo (₹15,000) | 1,500,000 eggs |
-| Enterprise | $250/mo (₹20,800) | 3,000,000 eggs | $1.00/10k eggs | $500/mo (₹41,700) | 5,500,000 eggs |
+| Starter | $30 (₹2,500)/mo | 150,000 eggs | $1.50 (₹125)/10k eggs | $60 (₹5,000)/mo | 350,000 eggs |
+| Commercial | $90 (₹7,500)/mo | 750,000 eggs | $1.20 (₹100)/10k eggs | $180 (₹15,000)/mo | 1,500,000 eggs |
+| Enterprise | $250 (₹20,800)/mo | 3,000,000 eggs | $1.00 (₹83.5)/10k eggs | $500 (₹41,700)/mo | 5,500,000 eggs |
 
-\* Beyond this volume, price is flat (capped) — every extra egg tracked is **pure margin**, which is a strong retention lever for your largest integrators (no bill shock, but you still capture their growth in engagement/lock-in).
+\* Beyond this volume, price is flat (capped) — every extra egg tracked is **pure margin**, a strong retention lever for your largest integrators (no bill shock, but you still capture their growth in engagement/lock-in).
 
 ---
 
@@ -103,54 +103,68 @@ Server → Client:  SyncResponse {
 
 ## 3. Financial Model — 3-Year Forecast
 
+All figures below are shown as **$USD (₹INR)** at the fixed rate of $1 = ₹83.5.
+
 ### 3.1 Key assumptions (stated explicitly — adjust these and re-run the model as real data comes in)
 
 | Assumption | Value |
 |---|---|
 | Field data-entry workers per client (avg) | Starter: 2 · Commercial: 6 · Enterprise: 20 |
 | Sync data volume | 50 KB / worker / active day, 26 active days/mo |
-| Cloud cost (managed Postgres, blended storage+backup) | $0.125/GB-month |
-| Cloud egress (dashboard reads, exports, retry overhead) | $0.09/GB, at 1.3× ingress volume |
+| Cloud cost (managed Postgres, blended storage+backup) | $0.125 (₹10.44)/GB-month |
+| Cloud egress (dashboard reads, exports, retry overhead) | $0.09 (₹7.52)/GB, at 1.3× ingress volume |
 | Client tier mix (funnel-shaped, field-sales-led) | 50% Starter · 35% Commercial · 15% Enterprise |
-| India field-sales opex (brother) | ₹90,000/mo total (₹50k draw + ₹20k travel + ₹15k marketing + ₹5k misc) |
-| Fixed infra floor (hosting, domain, monitoring) | ~$50/mo, flat regardless of client count |
-| Pre-launch sunk cost (devices, incorporation, initial marketing) | ~$3,000 one-time |
+| India field-sales opex (brother) | $1,078 (₹90,000)/mo total (₹50k draw + ₹20k travel + ₹15k marketing + ₹5k misc) |
+| Fixed infra floor (hosting, domain, monitoring) | **$50 (₹4,175)/mo**, flat regardless of client count |
+| Pre-launch sunk cost (devices, incorporation, initial marketing) | $3,000 (₹250,500) one-time |
+| **Development Opportunity Cost — full-time build phase** | **$6,000 (₹501,000)/mo** (your forgone senior Android/KMP contract income) |
+| **Development Opportunity Cost — part-time maintenance phase** | **$3,000 (₹250,500)/mo** (once product is stable and you scale back to part-time) |
+
+> **Why the Development Opportunity Cost line matters:** you are a 12+ year senior Android developer. Every month spent building HatcheryCRM solo is a month **not** billing at your market rate elsewhere. This is not a cash outflow your brother needs to fund, but it is a **real economic cost** that should factor into whether this venture is worth your time vs. contracting — the two breakeven scenarios in §3.3 make this explicit.
 
 ### 3.2 Data cost is **not** your cost driver — critical finding
 
-At 50KB/worker/day, even your largest Enterprise client (20 workers) generates only **~0.30 GB/year**. Modeled storage+egress cost per client, even after 3 years of cumulative storage growth:
+At 50KB/worker/day, even your largest Enterprise client (20 workers) generates only **~0.30 GB/year**. Modeled Cross-Platform/Offline Cloud Infrastructure cost per client, even after 3 years of cumulative storage growth:
 
-| Tier | Infra cost, Year 1 | Year 2 | Year 3 |
+| Tier | Infra Cost — Year 1 | Year 2 | Year 3 |
 |---|---|---|---|
-| Starter | $0.002/mo | $0.006/mo | $0.010/mo |
-| Commercial | $0.006/mo | $0.018/mo | $0.029/mo |
-| Enterprise | $0.022/mo | $0.059/mo | $0.096/mo |
+| Starter | **$0.0021 (₹0.18)/mo** | **$0.0059 (₹0.49)/mo** | **$0.0096 (₹0.80)/mo** |
+| Commercial | **$0.0064 (₹0.53)/mo** | **$0.0176 (₹1.47)/mo** | **$0.0288 (₹2.41)/mo** |
+| Enterprise | **$0.0215 (₹1.80)/mo** | **$0.0587 (₹4.90)/mo** | **$0.0959 (₹8.01)/mo** |
+
+**Fixed infra floor (regardless of client count): $50 (₹4,175)/mo** — the flat cost of your managed Postgres instance, domain, monitoring, and CI. This, plus the per-client rows above, is your **entire Cross-Platform/Offline Cloud Infrastructure Cost**.
 
 **Takeaway:** infrastructure cost is **<0.1% of revenue at every tier, every year** — this pricing model has effectively **~99% gross margin** on the data/infra line. Your real unit economics battle is entirely in **sales cost of acquisition (CAC)**, support, and churn — not bandwidth or storage. Don't let infra-cost anxiety influence pricing decisions; it's noise. Do watch CAC closely.
 
 ### 3.3 Break-even client acquisition target
 
-- Blended ARPU (conservative — base price only, no overage): **$84/mo/client**
-- Blended ARPU (with modest overage revenue from ~25% of Commercial/Enterprise clients running partly into their metered band): **~$89/mo/client**
-- Total monthly burn (India field sales + fixed infra floor): **$1,128/mo (₹94,175/mo)**
+- Blended ARPU (conservative — base price only, no overage): **$84.00 (₹7,014)/mo/client**
+- Blended ARPU (with modest overage revenue from ~25% of Commercial/Enterprise clients running partly into their metered band): **~$89.33 (₹7,459)/mo/client**
 
-> **Break-even: 14 total clients**, in the assumed mix, e.g. **7 Starter + 5 Commercial + 2 Enterprise** ≈ $1,160/mo revenue vs. $1,128/mo burn.
+| Scenario | Monthly Burn | Break-even Clients |
+|---|---|---|
+| **Cash-only** (India field-sales opex + fixed infra — what your brother must actually cover) | **$1,128 (₹94,175)/mo** | **14 clients** (e.g. 7 Starter + 5 Commercial + 2 Enterprise ≈ $1,160/₹96,860 revenue) |
+| **Economic, full-time dev phase** (cash burn + **$6,000/₹501,000 opportunity cost**) | **$7,128 (₹595,175)/mo** | 85 clients |
+| **Economic, part-time dev phase** (cash burn + **$3,000/₹250,500 opportunity cost**) | **$4,128 (₹344,675)/mo** | 50 clients |
 
-This is a realistic near-term target for a single field rep in one Indian state/region — your brother needs roughly **one new client every 2–3 weeks** in the first ~7–9 months to hit break-even, assuming typical B2B field-sales cycles (relationship-building + demo + pilot + close) of 4–8 weeks per hatchery.
+> **Reading this:** your brother's real, cash-funded break-even target is **14 clients** — this is the number to put in front of him immediately. The 85-client and 50-client figures are the *true economic* break-even once your own time is priced in at market rate — useful for you personally to judge when this venture "pays for itself" versus contracting elsewhere, and a good milestone to re-evaluate whether to hire help or stay solo.
+
+This is a realistic near-term target for a single field rep in one Indian state/region — your brother needs roughly **one new client every 2–3 weeks** in the first ~7–9 months to hit the cash-only break-even, assuming typical B2B field-sales cycles (relationship-building + demo + pilot + close) of 4–8 weeks per hatchery.
 
 ### 3.4 3-Year cash flow forecast
 
-Illustrative adoption curve (adjust once you have real pipeline data — this is a planning scaffold, not a guarantee):
+Illustrative adoption curve (adjust once you have real pipeline data — this is a planning scaffold, not a guarantee). All figures **$USD (₹INR)**.
 
-| Year | Total Clients | Starter | Commercial | Enterprise | MRR | ARR | Infra $/mo | Opex $/mo | Net CF/mo (year-end) | Cumulative Cash Flow (year-end) |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 40 | 20 | 14 | 6 | $3,360 | $40,320 | ~$50 | $1,128 | +$2,232 | **+$3,626** (incl. −$3,000 pre-launch sunk cost) |
-| 2 | 150 | 75 | 52 | 23 | $12,680 | $152,160 | ~$50 | $1,128 | +$11,552 | **+$86,460** |
-| 3 | 400 | 200 | 140 | 60 | $33,600 | $403,200 | ~$51 | $1,128 | +$32,471 | **+$350,126** |
+| Year | Total Clients | Starter / Commercial / Enterprise | MRR | ARR | Infra $/mo | Cash Opex $/mo | Net Cash Flow/mo | Cumulative Cash Flow (year-end) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 40 | 20 / 14 / 6 | $3,360 (₹280,560) | $40,320 (₹3,366,720) | ~$50 (₹4,175) | **$1,128 (₹94,175)** | $552 (₹46,105) | **+$3,626 (₹302,760)** |
+| 2 | 150 | 75 / 52 / 23 | $12,680 (₹1,058,780) | $152,160 (₹12,705,360) | ~$50 (₹4,175) | **$1,128 (₹94,175)** | $6,903 (₹576,386) | **+$86,460 (₹7,219,388)** |
+| 3 | 400 | 200 / 140 / 60 | $33,600 (₹2,805,600) | $403,200 (₹33,667,200) | ~$51 (₹4,259) | **$1,128 (₹94,175)** | $21,972 (₹1,834,675) | **+$350,126 (₹29,235,488)** |
 
 **Reading this table:**
-- Break-even is crossed **well within Year 1** (at ~14 clients, likely months 5–8 depending on ramp speed) — cumulative cash flow is already positive by end of Year 1 even after absorbing the $3,000 pre-launch cost.
-- The model is **extremely operating-leverage-favorable**: opex is nearly flat (~$1,128/mo, dominated by your brother's fixed field-sales cost) while revenue scales linearly with clients — so gross margin on each *incremental* client past break-even is ~99%+.
+- Break-even is crossed **well within Year 1** (at ~14 clients, likely months 5–8 depending on ramp speed) — cumulative cash flow is already positive by end of Year 1 even after absorbing the $3,000 (₹250,500) pre-launch sunk cost.
+- The model is **extremely operating-leverage-favorable**: cash opex is nearly flat (**$1,128/₹94,175 per month**, dominated by your brother's fixed field-sales cost) while revenue scales linearly with clients — so gross margin on each *incremental* client past break-even is ~99%+.
+- If you instead prefer to see this net of your **full-time Development Opportunity Cost ($6,000/₹501,000 per month)**, Year 1 net cash flow becomes *negative* (−$5,448/₹455,000 per month average) until client count clears ~85 — reinforcing that Year 1 should be viewed as an investment phase funded by your own runway/savings, not by the CRM's own cash flow.
 - **Sensitivity worth running before you commit to this plan:** (a) actual sales cycle length/CAC in your target region, (b) churn rate (not modeled above — assumed 0% for simplicity; even 5–10% annual churn is easily absorbed given the margin structure, but should be tracked), (c) whether tier mix skews more Starter-heavy early on (likely, since Enterprise integrators take longer sales cycles/trust-building — you may want to re-run with a 65/25/10 Year-1 mix as a more conservative case).
 
 ---
@@ -160,4 +174,5 @@ Illustrative adoption curve (adjust once you have real pipeline data — this is
 1. **Architecture:** build the append-only event chain from day one — retrofitting integrity guarantees onto a "just store the current count" schema later is a much larger rewrite than doing it now while the CRUD screens are still fresh.
 2. **Sync:** the per-device vector-clock sync token is the single highest-leverage change vs. a naive full-batch-resync approach — implement it before onboarding your first multi-worker Commercial/Enterprise client, since that's where sync conflicts will actually surface.
 3. **Pricing:** the caps are generous relative to realistic hatchery volumes for Starter/Commercial — don't be afraid to also offer **annual prepay at a 15–20% discount** once you have paying customers; at these margins it's pure win to trade a little revenue for locked-in cash flow and lower churn risk while your brother is still building the sales pipeline.
-4. **Immediate action for your brother:** the 14-client break-even target is a concrete, motivating number to put in front of him — frame the first sales push as "14 hatcheries to cash-flow-positive," not an abstract revenue target.
+4. **Immediate action for your brother:** the **14-client cash-only break-even target ($1,128/₹94,175 per month to cover)** is a concrete, motivating number to put in front of him — frame the first sales push as "14 hatcheries to cash-flow-positive," not an abstract revenue target.
+5. **Immediate action for you:** track your own time against the **$6,000 (₹501,000)/month opportunity cost** honestly. If Year 1 client acquisition tracks meaningfully below the 40-client plan, consider shifting to part-time build mode (dropping your effective opportunity cost to $3,000/₹250,500/month) rather than absorbing the full economic cost indefinitely.
